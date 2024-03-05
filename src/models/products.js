@@ -8,16 +8,17 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
       },
       name: {
-        tupe: DataTypes.STRING(500),
+        type: DataTypes.STRING(500),
         allowNull: 0,
+        unique: 1,
       },
       price: {
         type: DataTypes.BIGINT(20),
-        allowNull,
-      },
-      password: {
-        type: DataTypes.STRING(500),
         allowNull: 0,
+      },
+      state: {
+        type: DataTypes.TINYINT(4),
+        defaultValue: 1,
       },
     },
     {

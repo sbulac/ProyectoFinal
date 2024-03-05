@@ -2,7 +2,7 @@ const { request, response } = require("express");
 
 module.exports = (req = request, res = response, next) => {
   try {
-    const { nombre, email, password } = req.body;
+    const { nombre, email, numero, password } = req.body;
 
     if (!nombre) {
       return res
@@ -23,6 +23,12 @@ module.exports = (req = request, res = response, next) => {
         .status(400)
         .json({ status: false, msg: "El email es invalido" });
     }
+    if (!numero) {
+      return res
+        .status(400)
+        .json({ status: false, msg: "El numero es requerido" });
+    }
+
     if (!password) {
       return res
         .status(400)
@@ -36,6 +42,7 @@ module.exports = (req = request, res = response, next) => {
         .status(400)
         .json({ status: false, msg: "La contraseña es invalida" });
     }
+    next();
   } catch (error) {
     console.log(error);
     return res.status(500).json({ status: false, msg: "Error en el servidor" });

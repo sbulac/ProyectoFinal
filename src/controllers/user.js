@@ -1,31 +1,31 @@
 const { request, response } = require("express");
-const { sequielize, Users: userModel } = require("../models");
-const { keyToken } = require("../config");
 const jwt = require("jsonwebtoken");
+const { keyToken } = require("../config");
+const { sequelieze, Client } = require("../models");
 const { validPassword } = require("../helpers/bycriptPassword");
 
-const creatUser = async (req = request, resp = response) => {
-  const transaction = await sequielize.transaction();
+const createClient = async (req = request, res = response) => {
+  const transaction = await sequelieze.transaction();
   try {
-    const { nombre, email, password, profile } = req.body;
+    const { nombre, email, numero, password } = req.body;
 
     if (!nombre && !email && !password) {
       await transaction.rollback();
-      return resp.status(400).json({
+      return res.status(400).json({
         msg: "Todos los campos son obligatorios.",
         status: false,
       });
     }
 
-    const userCreated = await userModel.create(
-      { nombre, email, password, profile },
+    const userCreated = await Client.create(
+      { name: nombre, email, phone: numero, password },
       {
         transaction,
       }
     );
 
     await transaction.commit();
-    return resp.status(200).json({
+    return res.status(200).json({
       status: true,
       msg: "Usuario registado",
       userCreated,
@@ -33,7 +33,7 @@ const creatUser = async (req = request, resp = response) => {
   } catch (error) {
     await transaction.rollback();
     console.log(error);
-    return resp.status(500).json({
+    return res.status(500).json({
       msg: "Error en el servidor",
       status: false,
     });
@@ -42,8 +42,8 @@ const creatUser = async (req = request, resp = response) => {
 
 const login = async (req = request, res = response, next) => {
   try {
-    const { email, passwrod } = req.body;
-    const user = await userModel.findOne({
+    const { email, password } = req.body;
+    const user = await Client.findOne({
       where: {
         email,
       },
@@ -74,7 +74,56 @@ const login = async (req = request, res = response, next) => {
   }
 };
 
+const disableClient = async (req = request, res = response) => {
+  const transaction = await sequelieze.transaction();
+  try {
+    const { id } = req.params;
+
+    const disableClient = await Client.update(
+      { state: 0 },
+      { where: { id } }
+    );
+    await transaction.commit();
+    return res.status(200).json({
+      status: true,
+      msg: "Cliente deshabilitado",
+      disableClient,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      msg: "Error en el servidor",
+      status: false,
+    });
+  }
+};
+const enableClient = async (req = request, res = response) => {
+  const transaction = await sequelieze.transaction();
+  try {
+    const { id } = req.params;
+
+    const disableClient = await Client.update(
+      { state: 1 },
+      { where: { id } }
+    );
+    await transaction.commit();
+    return res.status(200).json({
+      status: true,
+      msg: "Cliente habilitado",
+      disableClient,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      msg: "Error en el servidor",
+      status: false,
+    });
+  }
+};
+
 module.exports = {
-  creatUser,
+  createClient,
   login,
+  disableClient,
+  enableClient,
 };

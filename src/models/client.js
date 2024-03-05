@@ -8,12 +8,12 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
       },
       name: {
-        tupe: DataTypes.STRING(500),
+        type: DataTypes.STRING(500),
         allowNull: 0,
       },
       email: {
         type: DataTypes.STRING(500),
-        allowNull,
+        allowNull: 0,
       },
       phone: {
         type: DataTypes.STRING(500),
@@ -24,11 +24,19 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(500),
         allowNull: 0,
       },
+      state: {
+        type: DataTypes.TINYINT(4),
+        defaultValue: 1,
+      },
     },
     {
       tableName: "client",
     }
   );
+
+  Client.associate = (models) => {
+    Client.hasMany(models.Orders, { foreignKey: "id_client" });
+  };
 
   return Client;
 };

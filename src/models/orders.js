@@ -7,28 +7,27 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      name: {
-        tupe: DataTypes.STRING(500),
+      id_client: {
+        type: DataTypes.BIGINT(20),
         allowNull: 0,
-      },
-      email: {
-        type: DataTypes.STRING(500),
-        allowNull,
       },
       id_products: {
-        type: DataTypes.BIGINT(500),
+        type: DataTypes.JSON,
         allowNull: 0,
-        unique: 1,
       },
-      password: {
-        type: DataTypes.STRING(500),
-        allowNull: 0,
+      state: {
+        type: DataTypes.TINYINT(4),
+        defaultValue: 1,
       },
     },
     {
       tableName: "orders",
     }
   );
+
+  Orders.associate = (models) => {
+    Orders.belongsTo(models.Client, { foreignKey: "id_client" });
+  };
 
   return Orders;
 };
