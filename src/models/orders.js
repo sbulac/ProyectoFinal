@@ -9,11 +9,11 @@ module.exports = (sequelize, DataTypes) => {
       },
       id_client: {
         type: DataTypes.BIGINT(20),
-        allowNull: 0,
+        allowNull: false,
       },
       id_products: {
         type: DataTypes.JSON,
-        allowNull: 0,
+        allowNull: false,
       },
       state: {
         type: DataTypes.TINYINT(4),

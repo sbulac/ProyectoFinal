@@ -31,7 +31,7 @@ const createOrder = async (req = request, res = response) => {
     );
 
     if (!isContained) {
-      return res.status(403).json({
+      return res.status(404).json({
         msg: "Hay productos que no están registrados",
         status: false,
       });

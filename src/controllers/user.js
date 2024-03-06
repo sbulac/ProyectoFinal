@@ -3,13 +3,14 @@ const jwt = require("jsonwebtoken");
 const { keyToken } = require("../config");
 const { sequelieze, Client } = require("../models");
 const { validPassword } = require("../helpers/bycriptPassword");
+const validateToken = require("../helpers/validateRoleToken");
 
 const createClient = async (req = request, res = response) => {
   const transaction = await sequelieze.transaction();
   try {
-    const { nombre, email, numero, password } = req.body;
+    const { name, email, phone, role, password } = req.body;
 
-    if (!nombre && !email && !password) {
+    if (!name && !email && !phone && !role && !password) {
       await transaction.rollback();
       return res.status(400).json({
         msg: "Todos los campos son obligatorios.",
@@ -18,7 +19,7 @@ const createClient = async (req = request, res = response) => {
     }
 
     const userCreated = await Client.create(
-      { name: nombre, email, phone: numero, password },
+      { name, email, phone, role, password },
       {
         transaction,
       }
@@ -65,7 +66,7 @@ const login = async (req = request, res = response, next) => {
       });
     }
 
-    const token = jwt.sign({ id: userData.id }, keyToken);
+    const token = jwt.sign({ id: userData.id, role: userData.role }, keyToken);
 
     return res.json({ token, status: true });
   } catch (error) {
@@ -79,10 +80,13 @@ const disableClient = async (req = request, res = response) => {
   try {
     const { id } = req.params;
 
-    const disableClient = await Client.update(
-      { state: 0 },
-      { where: { id } }
-    );
+    if (validateToken(req, res)) {
+      return res
+        .status(403)
+        .send("No se tienen los permisos requeridos para esta accion");
+    }
+
+    const disableClient = await Client.update({ state: 0 }, { where: { id } });
     await transaction.commit();
     return res.status(200).json({
       status: true,
@@ -102,10 +106,13 @@ const enableClient = async (req = request, res = response) => {
   try {
     const { id } = req.params;
 
-    const disableClient = await Client.update(
-      { state: 1 },
-      { where: { id } }
-    );
+    if (validateToken(req, res)) {
+      return res
+        .status(403)
+        .send("No se tienen los permisos requeridos para esta accion");
+    }
+
+    const disableClient = await Client.update({ state: 1 }, { where: { id } });
     await transaction.commit();
     return res.status(200).json({
       status: true,

@@ -9,12 +9,12 @@ module.exports = (sequelize, DataTypes) => {
       },
       name: {
         type: DataTypes.STRING(500),
-        allowNull: 0,
+        allowNull: false,
         unique: 1,
       },
       price: {
         type: DataTypes.BIGINT(20),
-        allowNull: 0,
+        allowNull: false,
       },
       state: {
         type: DataTypes.TINYINT(4),

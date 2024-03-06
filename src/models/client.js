@@ -9,20 +9,28 @@ module.exports = (sequelize, DataTypes) => {
       },
       name: {
         type: DataTypes.STRING(500),
-        allowNull: 0,
+        allowNull: false,
       },
       email: {
         type: DataTypes.STRING(500),
-        allowNull: 0,
+        allowNull: false,
       },
       phone: {
         type: DataTypes.STRING(500),
-        allowNull: 0,
+        allowNull: false,
         unique: 1,
       },
       password: {
         type: DataTypes.STRING(500),
-        allowNull: 0,
+        allowNull: false,
+      },
+      role: {
+        type: DataTypes.STRING(500),
+        allowNull: false,
+        defaultValue: "client",
+        validate: {
+          isIn: [["admin", "client"]],
+        },
       },
       state: {
         type: DataTypes.TINYINT(4),

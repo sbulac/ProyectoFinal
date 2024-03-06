@@ -1,5 +1,6 @@
 const { request, response } = require("express");
 const { sequelieze, Products } = require("../models");
+const validateToken = require("../helpers/validateRoleToken");
 
 const getProducts = async (req = request, res = response) => {
   const transaction = await sequelieze.transaction();
@@ -23,8 +24,15 @@ const getProducts = async (req = request, res = response) => {
 
 const createProducts = async (req = request, res = response) => {
   const transaction = await sequelieze.transaction();
+
   try {
     const { name, price } = req.body;
+
+    if (validateToken(req, res)) {
+      return res
+        .status(400)
+        .send("No se tienen los permisos requeridos para esta accion");
+    }
 
     if (!name && !price) {
       await transaction.rollback();
@@ -62,6 +70,12 @@ const updateProduct = async (req = request, res = response) => {
     const { name, price } = req.body;
     const { id } = req.params;
 
+    if (validateToken(req, res)) {
+      return res
+        .status(400)
+        .send("No se tienen los permisos requeridos para esta accion");
+    }
+
     const productChanged = await Products.update(
       { name, price },
       { where: { id } }
@@ -86,6 +100,12 @@ const disableProduct = async (req = request, res = response) => {
   try {
     const { id } = req.params;
 
+    if (validateToken(req, res)) {
+      return res
+        .status(400)
+        .send("No se tienen los permisos requeridos para esta accion");
+    }
+
     const productChanged = await Products.update(
       { state: 0 },
       { where: { id } }
@@ -108,6 +128,12 @@ const enableProduct = async (req = request, res = response) => {
   const transaction = await sequelieze.transaction();
   try {
     const { id } = req.params;
+
+    if (validateToken(req, res)) {
+      return res
+        .status(400)
+        .send("No se tienen los permisos requeridos para esta accion");
+    }
 
     const productChanged = await Products.update(
       { state: 1 },
@@ -133,5 +159,5 @@ module.exports = {
   createProducts,
   updateProduct,
   disableProduct,
-  enableProduct
+  enableProduct,
 };

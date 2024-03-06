@@ -7,6 +7,5 @@ module.exports = (app) => {
   const router = express.Router();
 
   app.use("/orders", router);
-//   router.get("/", getProducts);
   router.post("/create/:id", validateCreateOrder, createOrder);
 };
