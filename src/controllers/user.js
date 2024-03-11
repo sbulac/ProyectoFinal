@@ -68,7 +68,7 @@ const login = async (req = request, res = response, next) => {
 
     const token = jwt.sign({ id: userData.id, role: userData.role }, keyToken);
 
-    return res.json({ token, status: true });
+    return res.json({ user: userData, token, status: true });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ msg: "Error en el servidor", status: false });
